@@ -1,24 +1,21 @@
-name: CI Pipeline # tên pipeline
-on: # sự kiện kích hoạt chạy pipeline
-  push: # chạy khi push code
-    branches:
-      - main # chỉ chạy trên nhánh main
-jobs: #các công việc
-  build: # công việc build
-    runs-on: ubuntu-latest # chạy trên máy ảo ubuntu bản mới nhất
-    steps: # các bước thực hiện
-      - name: Checkout code
-        uses: actions/checkout@v3 #lấy code từ repo
-      - name: Build backend image
-        run: docker build -t myapp-backend:latest ./backend
-      - name: Build frontend image
-        run: docker build -t myapp-frontend:latest ./frontend
-      - name: Login to dockerhub
+name: CI/CD Pipeline
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        name: Checkout Code
+      - name: Build Backend Image
+        run: docker build -t buihoangducanh0987/myapp-backend:latest ./backend
+      - name: Build Frontend Image
+        run: docker build -t buihoangducanh0987/myapp-frontend:latest ./frontend
+      - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME}}
-          password: ${{ secrets.DOCKER_PASSWORD}}
-      - name: PUSH backend image
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Push Backend Image
         run: docker push buihoangducanh0987/myapp-backend:latest
-      - name: PUSH frontend image
+      - name: Push Frontend Image
         run: docker push buihoangducanh0987/myapp-frontend:latest
