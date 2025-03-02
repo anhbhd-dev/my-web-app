@@ -1,0 +1,21 @@
+name: CI Pipeline # tên pipeline
+on: # sự kiện kích hoạt chạy pipeline
+  push: # chạy khi push code
+    branches:
+      - main # chỉ chạy trên nhánh main
+jobs: #các công việc
+  build: # công việc build
+    runs-on: ubuntu-latest # chạy trên máy ảo ubuntu bản mới nhất
+    steps: # các bước thực hiện
+      - name: Checkout code
+        uses: actions/checkout@v3 #lấy code từ repo
+      - name: Build backend image
+        run: docker build -t myapp-backend ./backend
+      - name: Build frontend image
+        run: docker build -t myapp-frontend ./frontend
+      - name: Run containers
+        run: |
+          docker run -d --name backend -p 5000:5000 myapp-backend
+          docker run -d --name frontend -p 8080:80 myapp-frontend
+      - name: Test API
+        run: curl http://localhost:5000/api/data
